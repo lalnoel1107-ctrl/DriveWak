@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DriveWake — Updated</title>
+  <link rel="stylesheet" href="styles-updated.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- MediaPipe FaceMesh and helpers via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+</head>
+<body>
+  <header>
+    <h1>DriveWake — Drowsiness detector</h1>
+    <p class="warning">Do rely on this for real driving safety.</p>
+    <p class="version">OPEN THIS FILE: C:\Users\annik\drivewake\index-updated.html</p>
+    <p class="version">Build updated 2026-08-11 — if you don’t see this, you are loading the wrong file.</p>
+  </header>
+
+  <main>
+    <section id="camera-area">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="overlay"></canvas>
+      <div id="alert" class="hidden">DROWSINESS DETECTED — WAKE UP!</div>
+    </section>
+
+    <section id="controls">
+      <button id="startBtn">Start Camera</button>
+      <button id="stopBtn" disabled>Stop Camera</button>
+    </section>
+
+    <section id="drowsiness-panel">
+      <h2>Driving Status</h2>
+      <p>Use the live driving alerts and monitor your drowsiness while the map tracks your route.</p>
+      <div id="drowsinessStatus" class="drowsiness-status">
+        <p id="yawnStatus">Yawn status: waiting...</p>
+        <p id="nodStatus">Head nod status: stable</p>
+      </div>
+    </section>
+
+    <section id="ai-chat">
+      <h2>Wakemate</h2>
+      <div id="chatMessages" class="chatMessages" aria-live="polite">
+        <div class="chatRow ai"><span class="chatLabel">Wakemate</span><div class="chatBubble">Hello! I can help you drive safely. Tell me what you need.</div></div>
+      </div>
+      <div class="chatInputRow">
+        <input id="chatInput" type="text" placeholder="Type here..." />
+        <button id="sendChatBtn" class="modeBtn">Send</button>
+      </div>
+    </section>
+
+    <section id="location">
+      <h3>Your Current Location</h3>
+      <p id="locationStatus">Determining location…</p>
+      <div class="routeControls">
+        <label for="destinationInput">Where do they want to go?</label>
+        <div class="destinationRow">
+          <input id="destinationInput" type="text" placeholder="Type a city or address">
+          <button id="setRouteBtn" class="modeBtn">Show Route</button>
+        </div>
+      </div>
+      <div id="worldMap" aria-label="World map showing your current location"></div>
+    </section>
+
+    <section id="heart-rate">
+      <h3>Watch Heart Rate</h3>
+      <p>Connect a Bluetooth-enabled watch or heart-rate monitor to see your real-time pulse.</p>
+      <div class="heartRateControls">
+        <button id="connectHeartRate" class="modeBtn">Connect Watch</button>
+        <button id="disconnectHeartRate" class="modeBtn" disabled>Disconnect</button>
+      </div>
+      <p id="heartRateStatus">Not connected.</p>
+      <p id="heartRateValue" class="heart-rate-value">—</p>
+    </section>
+
+    <section id="advanced">
+      <h3>Advanced / Integrations</h3>
+      <p>This site supports browser-based monitoring and route tracking for live driving safety.</p>
+    </section>
+
+    <section id="notes">
+      <h3>Notes & Limitations</h3>
+      <ul>
+        <li>This runs entirely in the browser and uses camera frames to estimate eye openness using MediaPipe FaceMesh landmarks.</li>
+        <li>False positives/negatives are possible. This is a proof-of-concept — not a certified safety device.</li>
+        <li>Always obey local laws and use approved safety products when driving.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <small>DriveWake — created by an assistant using Copilot CLI runtime in VS Code.</small>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="script-updated.js"></script>
+</body>
+</html>

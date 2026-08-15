@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+.env
+.venv/
+venv/
+ENV/
+env/
+pip-wheel-metadata/
+# VS Code
+.vscode/
+# macOS
+.DS_Store
+# Byte-compiled / optimized / DLL files
+*.so
+# Logs and databases
+*.log
+*.sqlite3
+# Unit test / coverage reports
+.coverage
+.pytest_cache/
+htmlcov/
+# Installer logs
+pip-log.txt
+# Node
+node_modules/
+# Static build artifacts
+staticfiles/
+# Temporary
+*.tmp
+# Editor backups
+*~

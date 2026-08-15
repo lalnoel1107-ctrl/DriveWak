@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="DriveWake helps drivers with live GPS tracking, route planning, and a safe-driving assistant." />
+  <title>DriveWake | Live GPS & Route Guide</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- MediaPipe FaceMesh and helpers via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark" aria-label="DriveWake logo">
+        <img src="drivewake-logo.svg" alt="DriveWake logo" />
+      </div>
+      <div>
+        <div class="brand-name">DriveWake</div>
+        <div class="brand-tag">Live GPS + driving assistant</div>
+      </div>
+    </div>
+
+    <nav class="topnav" aria-label="Main navigation">
+      <a href="#overview">Overview</a>
+      <a href="#routes">Routes</a>
+      <a href="#wakemate">Wakemate</a>
+    </nav>
+
+    <div class="top-actions">
+      <button class="ghost-btn" type="button">Safety Mode</button>
+      <button class="primary-btn" type="button">Live Route</button>
+    </div>
+  </header>
+
+  <main class="app-shell" id="overview">
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <p class="eyebrow">Smart travel dashboard</p>
+        <h1>Drive safer with live location and calm guidance.</h1>
+      </div>
+      <div class="status-pills" aria-label="System status">
+        <span class="pill on">GPS live</span>
+        <span class="pill on">Route ready</span>
+        <span class="pill on">Wakemate online</span>
+      </div>
+    </section>
+
+    <section class="showcase" aria-label="DriveWake product screenshots">
+      <div class="showcase-card primary">
+        <div class="mini-header">
+          <span class="dot red"></span>
+          <span class="dot amber"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="mini-map"></div>
+        <div class="mini-stats">
+          <span>Live</span>
+          <strong>47.6584, -122.1322</strong>
+        </div>
+      </div>
+
+      <div class="showcase-card secondary">
+        <div class="mini-chip">Route</div>
+        <div class="mini-route">
+          <span class="point start"></span>
+          <span class="line"></span>
+          <span class="point end"></span>
+        </div>
+        <div class="mini-eta">ETA 18 min</div>
+      </div>
+
+      <div class="showcase-card tertiary">
+        <div class="mini-chat">
+          <span class="bubble ai">Need a break?</span>
+          <span class="bubble user">I’m a bit tired</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="product-overview" aria-label="DriveWake product overview">
+      <div class="overview-copy">
+        <p class="eyebrow">Built for real drivers</p>
+        <h2>Smarter trips start with calmer guidance.</h2>
+        <p>DriveWake combines live GPS, route awareness, and a personal safety assistant so drivers can stay focused, informed, and ready when the road changes.</p>
+        <div class="cta-row">
+          <button class="primary-btn" type="button">Start live trip</button>
+          <button class="ghost-btn" type="button">View safety flow</button>
+        </div>
+      </div>
+
+      <div class="metric-strip" aria-label="DriveWake metrics">
+        <div class="metric-item">
+          <span>Live tracking</span>
+          <strong>±5m</strong>
+        </div>
+        <div class="metric-item">
+          <span>Route ETA</span>
+          <strong>18 min</strong>
+        </div>
+        <div class="metric-item">
+          <span>AI support</span>
+          <strong>24/7</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-grid" aria-label="DriveWake features">
+      <article class="feature-card">
+        <div class="feature-icon">◎</div>
+        <h3>Live map certainty</h3>
+        <p>Know where you are, where you’re headed, and how the route is tracking in real time.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">⚑</div>
+        <h3>Safer driving prompts</h3>
+        <p>Get helpful guidance for darkness, fatigue, slowing down, and staying alert during longer drives.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">✦</div>
+        <h3>AI driving assistant</h3>
+        <p>Wakemate offers practical, friendly coaching built around speed, safety, and driver awareness.</p>
+      </article>
+    </section>
+
+    <div class="app-grid">
+      <section class="panel camera-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow small">Optional feature</p>
+            <h2>Drowsiness Detector</h2>
+          </div>
+          <span class="live-dot">Preview</span>
+        </div>
+
+        <div id="camera-area">
+          <video id="video" autoplay playsinline></video>
+          <canvas id="overlay"></canvas>
+          <div id="alert" class="hidden">DROWSINESS DETECTED — WAKE UP!</div>
+        </div>
+
+        <div id="controls" class="camera-controls">
+          <button id="startBtn" class="primary-btn" type="button">Start Camera</button>
+          <button id="stopBtn" class="ghost-btn" type="button" disabled>Stop Camera</button>
+        </div>
+      </section>
+
+      <section id="location" class="panel map-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow small">Current trip</p>
+            <h2>Your Current Location</h2>
+          </div>
+          <span class="live-dot">Live</span>
+        </div>
+
+        <p id="locationStatus" class="location-status">Determining location…</p>
+
+        <div id="gpsPanel" class="gpsPanel">
+          <div class="gpsRow"><strong>Latitude:</strong> <span id="gpsLat">—</span></div>
+          <div class="gpsRow"><strong>Longitude:</strong> <span id="gpsLon">—</span></div>
+          <div class="gpsRow"><strong>Accuracy:</strong> <span id="gpsAcc">—</span></div>
+          <div class="gpsRow"><strong>Altitude:</strong> <span id="gpsAlt">—</span></div>
+          <div class="gpsRow"><strong>Speed:</strong> <span id="gpsSpeed">—</span></div>
+          <div class="gpsRow"><strong>Last update:</strong> <span id="gpsTime">—</span></div>
+        </div>
+
+        <div class="routeControls" id="routes">
+          <label for="destinationInput">Where do they want to go?</label>
+          <div class="destinationRow">
+            <input id="destinationInput" type="text" placeholder="Type a city or address">
+            <button id="setRouteBtn" class="modeBtn">Show Route</button>
+          </div>
+        </div>
+
+        <div id="worldMap" aria-label="World map showing your current location"></div>
+      </section>
+
+      <aside id="ai-chat" class="panel chat-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="eyebrow small">Assistant</p>
+            <h2>Wakemate</h2>
+          </div>
+        </div>
+
+        <div id="chatMessages" class="chatMessages" aria-live="polite">
+          <div class="chatRow ai"><span class="chatLabel">Wakemate</span><div class="chatBubble">Hello! I can help you drive safely. Tell me what you need.</div></div>
+        </div>
+
+        <div class="ai-config">
+          <label for="apiKeyInput">AI API key</label>
+          <div class="apiKeyRow">
+            <input id="apiKeyInput" type="password" placeholder="OpenRouter API key (optional)" />
+            <button id="saveApiKeyBtn" class="ghost-btn" type="button">Save</button>
+          </div>
+          <div id="aiStatus" class="aiStatus">AI mode: local fallback</div>
+        </div>
+
+        <div class="chatInputRow">
+          <input id="chatInput" type="text" placeholder="Type here..." />
+          <button id="sendChatBtn" class="modeBtn">Send</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <small>DriveWake</small>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="script.js?v=20260815"></script>
+</body>
+</html>
